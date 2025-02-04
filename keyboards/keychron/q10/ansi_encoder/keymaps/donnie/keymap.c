@@ -16,6 +16,17 @@ enum custom_keycodes {
 bool auto_shift_active = false;
 uint16_t auto_shift_timer = 0;
 
+bool win_mode;
+
+bool dip_switch_update_user(uint8_t index, bool active) {
+    if(index == 0 && active) {
+        win_mode = true;
+    } else {
+        win_mode = false;
+    }
+    return true;
+}
+
 #define KC_TASK LGUI(KC_TAB)
 #define KC_FLXP LGUI(KC_E)
 #define KC_SINS LSFT(KC_INS)
@@ -27,18 +38,30 @@ void keyboard_post_init_user(void) {
 }
 
 bool rgb_matrix_indicators_user(void) {
-    if (auto_shift_active) {
-        rgb_matrix_set_color(3, RGB_RED);
-    }
-
-    if (get_highest_layer(layer_state) == WIN_BASE || get_highest_layer(layer_state) == WIN_FN) {
-        if (!host_keyboard_led_state().caps_lock) {
-            for (uint8_t i = 0; i < RGB_MATRIX_LED_COUNT; i++) {
-                rgb_matrix_set_color(i, RGB_WHITE);
+    uint8_t current_layer = get_highest_layer(layer_state);
+    switch (current_layer) {
+        case MAC_BASE:
+        case WIN_BASE:
+            if (win_mode) {
+                if (auto_shift_active) {
+                    rgb_matrix_set_color_all(RGB_RED);
+                } else {
+                    rgb_matrix_set_color_all(RGB_WHITE);
+                }
+            } else {
+                rgb_matrix_set_color_all(RGB_BLUE);
             }
-        }
+            break;
+        case MAC_FN:
+            rgb_matrix_set_color_all(RGB_YELLOW);
+            break;
+        case WIN_FN:
+            rgb_matrix_set_color_all(RGB_YELLOW);
+            break;
+        default:
+            break;
     }
-    return true;
+    return false;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
