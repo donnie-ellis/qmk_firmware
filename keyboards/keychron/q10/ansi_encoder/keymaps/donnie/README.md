@@ -1,5 +1,6 @@
 # Guides and code used
 [Setting a different background per layer](https://www.reddit.com/r/Keychron/comments/128ifs3/qmk_help_can_i_set_a_different_backlight_colour/)  
+[Keycodes](https://pmortensen.eu/world2/2023/09/18/raw-qmk-keycodes-not-symbolic/)  
 
 
 ## Compile this keymap
