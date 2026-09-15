@@ -11,12 +11,14 @@ enum layers{
 enum custom_keycodes {
     AUTO_SHIFT = SAFE_RANGE,
     MY_EMAIL,
+    MAC_PROF2,
 };
 
 bool auto_shift_active = false;
 uint16_t auto_shift_timer = 0;
 
 bool win_mode;
+bool mac_profile2 = false;
 
 bool dip_switch_update_user(uint8_t index, bool active) {
     if(index == 0 && active) {
@@ -33,6 +35,7 @@ bool dip_switch_update_user(uint8_t index, bool active) {
 #define KC_COPY LCTL(KC_C)
 
 void keyboard_post_init_user(void) {
+    mac_profile2 = eeconfig_read_user() & 1;
     rgb_matrix_mode(RGB_MATRIX_SOLID_COLOR);
     rgb_matrix_sethsv(0, 0, 255);
 }
@@ -49,7 +52,7 @@ bool rgb_matrix_indicators_user(void) {
                     rgb_matrix_set_color_all(RGB_WHITE);
                 }
             } else {
-                rgb_matrix_set_color_all(RGB_BLUE);
+                rgb_matrix_set_color_all(mac_profile2 ? RGB_ORANGE : RGB_BLUE);
             }
             break;
         case MAC_FN:
@@ -77,7 +80,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case MY_EMAIL:
             if (record->event.pressed) {
-                SEND_STRING("donald.ellis@virginiaabc.com"); // Replace with your email
+                if (get_highest_layer(layer_state) == MAC_FN && mac_profile2) {
+                    SEND_STRING("donnie.ellis@mckesson.com");
+                } else {
+                    SEND_STRING("donald.ellis@virginiaabc.com");
+                }
+            }
+            return false;
+        case MAC_PROF2:
+            if (record->event.pressed) {
+                mac_profile2 = !mac_profile2;
+                eeconfig_update_user(mac_profile2 ? 1 : 0);
             }
             return false;
     }
@@ -102,7 +115,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [MAC_FN] = LAYOUT_ansi_89(
         RM_TOGG,  _______,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   _______,            _______,
-        _______,  _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+        _______,  _______,  _______,  MY_EMAIL, MAC_PROF2,_______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
         _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
         _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,            _______,            _______,
         _______,  _______,            _______,  _______,  _______,  _______,   _______,  _______,  NK_TOGG,  _______,  _______,  _______,  _______,  _______,  _______,
