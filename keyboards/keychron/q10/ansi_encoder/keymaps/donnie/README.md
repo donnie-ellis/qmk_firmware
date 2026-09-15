@@ -25,7 +25,7 @@ do something while Fn is held.
 
 ## Mac profiles
 
-`MAC_PROF2` (Fn + F3 on the Mac layer) toggles a second Mac "profile," persisted across
+`MAC_PROF2` (Fn + 3 on the Mac layer) toggles a second Mac "profile," persisted across
 reboots via `eeconfig_read_user`/`eeconfig_update_user`. It doesn't change any keys —
 just the base RGB color (purple vs. white) and which address `MY_EMAIL` sends, so you
 can visually and functionally distinguish two Mac contexts (e.g. two jobs) on one keymap.
@@ -34,9 +34,9 @@ can visually and functionally distinguish two Mac contexts (e.g. two jobs) on on
 
 | Key | Layer | Does |
 |---|---|---|
-| `MY_EMAIL` | Fn + F2 (Mac and Windows) | Types an email address. Windows always sends `donnie@dmellis.com`; on Mac it depends on the active profile — profile 1 sends `donnie@dmellis.com`, profile 2 sends `donnie.ellis@mckesson.com`. |
-| `MAC_PROF2` | Fn + F3 (Mac) | Toggles between the two Mac profiles (see above). |
-| `KC_LOCK` | Fn + F4 (Mac) | Locks the screen (⌃⌘Q). |
+| `MY_EMAIL` | Fn + 2 (Mac), Fn + F2 (Windows) | Types an email address. Windows always sends `donnie@dmellis.com`; on Mac it depends on the active profile — profile 1 sends `donnie@dmellis.com`, profile 2 sends `donnie.ellis@mckesson.com`. |
+| `MAC_PROF2` | Fn + 3 (Mac) | Toggles between the two Mac profiles (see above). |
+| `KC_LOCK` | Fn + top-right key (Mac) | Locks the screen (⌃⌘Q). |
 | `KC_MCOPY` / `KC_MPASTE` | Leftmost column, rows 2/3 (Mac base) | One-key ⌘C / ⌘V. |
 | `SS_WIN` | Leftmost column, row 4 (Mac base) | Window screenshot — sends ⌘⇧4 then Space to enter window-capture mode; click the window to finish. |
 | `KC_SSFULL` | Leftmost column, row 5 (Mac base) | Full-screen screenshot (⌘⇧3), saved straight to the desktop. |
