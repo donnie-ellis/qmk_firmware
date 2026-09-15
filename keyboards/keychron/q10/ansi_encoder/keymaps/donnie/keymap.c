@@ -12,6 +12,7 @@ enum custom_keycodes {
     AUTO_SHIFT = SAFE_RANGE,
     MY_EMAIL,
     MAC_PROF2,
+    WIN_FHOLD,
 };
 
 bool auto_shift_active = false;
@@ -19,6 +20,8 @@ uint16_t auto_shift_timer = 0;
 
 bool win_mode;
 bool mac_profile2 = false;
+bool win_f_held = false;
+uint8_t win_f_held_led = NO_LED;
 
 bool dip_switch_update_user(uint8_t index, bool active) {
     if(index == 0 && active) {
@@ -33,6 +36,7 @@ bool dip_switch_update_user(uint8_t index, bool active) {
 #define KC_FLXP LGUI(KC_E)
 #define KC_SINS LSFT(KC_INS)
 #define KC_COPY LCTL(KC_C)
+#define KC_LOCK LCTL(LGUI(KC_Q))
 
 void keyboard_post_init_user(void) {
     mac_profile2 = eeconfig_read_user() & 1;
@@ -81,6 +85,9 @@ bool rgb_matrix_indicators_user(void) {
         default:
             break;
     }
+    if (win_f_held && win_f_held_led != NO_LED) {
+        rgb_matrix_set_color(win_f_held_led, RGB_RED);
+    }
     return false;
 }
 
@@ -100,7 +107,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (get_highest_layer(layer_state) == MAC_FN && mac_profile2) {
                     SEND_STRING("donnie.ellis@mckesson.com");
                 } else {
-                    SEND_STRING("donald.ellis@virginiaabc.com");
+                    SEND_STRING("donnie@dmellis.com");
                 }
             }
             return false;
@@ -108,6 +115,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 mac_profile2 = !mac_profile2;
                 eeconfig_update_user(mac_profile2 ? 1 : 0);
+            }
+            return false;
+        case WIN_FHOLD:
+            if (record->event.pressed) {
+                win_f_held = !win_f_held;
+                win_f_held_led = g_led_config.matrix_co[record->event.key.row][record->event.key.col];
+                if (win_f_held) {
+                    register_code(KC_F);
+                } else {
+                    unregister_code(KC_F);
+                }
             }
             return false;
     }
@@ -132,7 +150,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
     [MAC_FN] = LAYOUT_ansi_89(
         RM_TOGG,  _______,  KC_F1,    KC_F2,    KC_F3,    KC_F4,    KC_F5,     KC_F6,    KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   _______,            _______,
-        _______,  _______,  _______,  MY_EMAIL, MAC_PROF2,_______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
+        _______,  _______,  _______,  MY_EMAIL, MAC_PROF2,KC_LOCK,  _______,   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
         _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,  _______,  _______,            _______,
         _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,            _______,            _______,
         _______,  _______,            _______,  _______,  _______,  _______,   _______,  _______,  NK_TOGG,  _______,  _______,  _______,  _______,  _______,  _______,
@@ -150,7 +168,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         RM_TOGG,  _______,  KC_BRID,  KC_BRIU,  KC_TASK,  KC_FLXP,  RM_VALD,   RM_VALU,  KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,   KC_VOLU,  _______,            _______,
         _______,  _______,  _______,  MY_EMAIL, _______,  _______,  _______,   _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,            _______,
         _______,  RM_TOGG,  RM_NEXT,  RM_VALU,  RM_HUEU,  RM_SATU,  RM_SPDU,   _______,  _______,  _______,  _______,  _______,  _______,   _______,  _______,            _______,
-        _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  RM_SATD,  RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,             _______,            _______,
+        _______,  _______,  RM_PREV,  RM_VALD,  RM_HUED,  WIN_FHOLD,RM_SPDD,   _______,  _______,  _______,  _______,  _______,  _______,             _______,            _______,
         _______,  _______,            _______,  _______,  _______,  _______,   _______,  _______,  NK_TOGG,  _______,  _______,  _______,   _______,  _______,  _______,
         _______,  _______,  _______,            _______,  _______,  _______,                       _______,            _______,                       _______,  _______,  _______),
 };
