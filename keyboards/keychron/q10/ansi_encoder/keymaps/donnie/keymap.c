@@ -71,18 +71,18 @@ bool rgb_matrix_indicators_user(void) {
         case MAC_BASE:
         case WIN_BASE:
             if (win_mode) {
-                rgb_matrix_set_color_all(RGB_WHITE);
-            } else if (mac_profile2) {
-                rgb_matrix_set_color_all(auto_shift_active ? RGB_RED : RGB_ORANGE);
-            } else {
                 rgb_matrix_set_color_all(RGB_BLUE);
+            } else if (mac_profile2) {
+                rgb_matrix_set_color_all(auto_shift_active ? RGB_RED : RGB_WHITE);
+            } else {
+                rgb_matrix_set_color_all(RGB_PURPLE);
             }
             break;
         case MAC_FN:
-            rgb_matrix_indicate_fn_keys(MAC_FN, RGB_YELLOW);
+            rgb_matrix_indicate_fn_keys(MAC_FN, mac_profile2 ? RGB_PINK : RGB_YELLOW);
             break;
         case WIN_FN:
-            rgb_matrix_indicate_fn_keys(WIN_FN, RGB_YELLOW);
+            rgb_matrix_indicate_fn_keys(WIN_FN, RGB_ORANGE);
             break;
         default:
             break;
