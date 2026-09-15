@@ -40,6 +40,23 @@ void keyboard_post_init_user(void) {
     rgb_matrix_sethsv(0, 0, 255);
 }
 
+static void rgb_matrix_indicate_fn_keys(uint8_t layer, uint8_t r, uint8_t g, uint8_t b) {
+    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+        for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+            uint8_t led_index = g_led_config.matrix_co[row][col];
+            if (led_index == NO_LED) {
+                continue;
+            }
+            uint16_t keycode = keymap_key_to_keycode(layer, (keypos_t){.row = row, .col = col});
+            if (keycode != KC_TRNS && keycode != KC_NO) {
+                rgb_matrix_set_color(led_index, r, g, b);
+            } else {
+                rgb_matrix_set_color(led_index, RGB_OFF);
+            }
+        }
+    }
+}
+
 bool rgb_matrix_indicators_user(void) {
     uint8_t current_layer = get_highest_layer(layer_state);
     switch (current_layer) {
@@ -56,10 +73,10 @@ bool rgb_matrix_indicators_user(void) {
             }
             break;
         case MAC_FN:
-            rgb_matrix_set_color_all(RGB_YELLOW);
+            rgb_matrix_indicate_fn_keys(MAC_FN, RGB_YELLOW);
             break;
         case WIN_FN:
-            rgb_matrix_set_color(31, 255, 255, 0);
+            rgb_matrix_indicate_fn_keys(WIN_FN, RGB_YELLOW);
             break;
         default:
             break;
